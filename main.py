@@ -1,3 +1,4 @@
+from copy import Error
 from mode import all_video_download, get_video, range_download, single_video_download
 import time
 import os
@@ -32,18 +33,28 @@ print()
 course_link = input('Course_link : \n\t')
 print()
 
+
+moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver')
+chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver')
+driver_path_check=os.path.exists(chrome_driver_path) or os.path.exists(moz_driver_path)
+
+if not driver_path_check:
+    raise Error('Selenium Driver is needed','Please ensure you have a chromedrive or mozilla firefox gecko driver in the root of the folder....Try again')
 # start browser in mute mode for the whole download section
 # ----chrome
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--mute-audio")
+if os.path.exists(chrome_driver_path) :
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--mute-audio")
 
-driver=webdriver.Chrome('/home/otchere-dev/Downloads/chromedriver_linux64/chromedriver',
-                        options=chrome_options)
+    driver=webdriver.Chrome(chrome_driver_path,
+                            options=chrome_options)
 
 # ---mozilla
-# profile = webdriver.FirefoxProfile()
-# profile.set_preference("media.volume_scale", "0.0")
-# driver = webdriver.Firefox(firefox_profile=profile)
+else:
+    profile = webdriver.FirefoxProfile()
+    profile.set_preference("media.volume_scale", "0.0")
+    driver = webdriver.Firefox(executable_path=moz_driver_path,
+                                firefox_profile=profile)
 
 # creating folder to hold download course video
 download_path=os.path.join(os.path.abspath('.'),course_link.split("/")[-1])
@@ -110,71 +121,4 @@ elif download_type.upper() == 'S':
 
 
 
-
-# course_path = create_folder.makeDownloadFolderPath(course_link)
-
-# create_folder.createFolder(course_path)
-
-# logger_path = create_logger.create_logger(course_path)
-
-# try:
-
-#     src = extract_video_url.sign_in_and_extractHTML(user_email,password,course_link)
-
-#     search = extract_video_url.draw_out_script(src)
-
-#     try :
-
-#         break_with_title = extract_video_url.clean_out(search)
-
-#         zipped_title_url = extract_video_url.title_url(break_with_title)
-
-#         print(f'\n{Fore.RED}There are {len(zipped_title_url)} lessons in this course !!!{Style.RESET_ALL}\n')
-
-#         download_type = input('Which type of download '
-#             + 'would you like to make: \n\t [S]ingle lesson, '
-#             + '[R]ange of lessons, [A]ll lessons:\n\t')
-
-#         if download_type.upper() == 'A':
-            
-#             download_mode.download_all(zipped_title_url,course_path,logger_path)
-        
-#         elif download_type.upper() =='R':
-            
-#             user_range = input('Provide range of lesson to download:\n\t '
-#                 + 'Use "," to seperate the range. eg. 1,20  :\n\t')
-            
-#             download_mode.range_download(user_range,zipped_title_url,course_path,logger_path)
-
-#         elif download_type.upper() == 'S':
-            
-#             user_esp = input('What a lesson number do you want eg. 10  :\n\t')
-
-#             download_mode.single_download(user_esp,zipped_title_url,course_path,logger_path)
-
-#         download_course_mat =input('Would you like to download the course material:'
-#                                     + '\n [Y]es to download or [N]o to skip: \n\t')
-
-#         if download_course_mat.upper()=='Y':
-            
-#             material_url = extract_material_url_and_download.extract_course_material_url(src)
-
-#             if material_url:
-
-#                 extract_material_url_and_download.extract_course_material(material_url,course_path)
-#             else:
-#                 print('This course does not have materials attached !!!')
-#         #validating user input
-#     except ValueError as ve:
-#         print('\nIncorrect log-in details...Retry with correct log-in details\n')
-#         print('Or it might be the url link to the course site\n')
-#         print('\n if not any of the above, report to github repo\n')
-
-# except requests.exceptions.ConnectionError as ce:
-
-#     print('\nYou are not connected to internet....Connect and retry\n')
-
-# except Exception as error:
-
-#     print(f'\nThere is an unknown error : "{error}"....Report issue github repo \n')
 
