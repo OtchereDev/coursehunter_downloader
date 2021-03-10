@@ -1,5 +1,6 @@
-from module.extractor.extract_video import extract_video
 
+
+from extract_video import extract_video
 import time
 
 from selenium.webdriver.common.action_chains import ActionChains
