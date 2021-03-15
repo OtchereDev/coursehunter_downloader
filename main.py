@@ -12,7 +12,7 @@ from colorama import Fore
 from colorama import Style
 from selenium.common.exceptions import TimeoutException, WebDriverException,ElementNotInteractableException,ElementClickInterceptedException
 
-from module.create import create_folder, 
+from module.create import create_folder
 
 
 
@@ -32,15 +32,15 @@ print()
 course_link = input('Course_link : \n\t')
 print()
 
-print(f'{Fore.RED}There is a chance that a slow internet connection will prevevnt the download from starting up, therfore you allowed to set a wait time fr the webdriver to wait on connection before breaking down. It is adivisable that is be between 20 and 180 seconds. By default it is 60 seconds{Style.RESET_ALL}\n')
+print(f'{Fore.RED}There is a chance that a slow internet connection will prevevnt the download from starting up, therfore you allowed to set a wait time for the webdriver to wait on connection before breaking down. It is adivisable that is be between 20 and 180 seconds. By default it is 60 seconds{Style.RESET_ALL}\n')
 delay=input('Webdriver Delay time (eg. 20) in seconds:\n\t')
 
-delay=delay or 60
+delay=int(delay) or 60
 
-if int(delay)<20:
+if delay<20:
     delay=20
 
-print(delay)
+
 moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver')
 chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver')
 driver_path_check=os.path.exists(chrome_driver_path) or os.path.exists(moz_driver_path)
@@ -98,6 +98,7 @@ try:
 
     # initiate download
     print(f'\n{Fore.RED}There are {len(episodeList)} lessons in this course !!!{Style.RESET_ALL}\n')
+    print('Please dont forget to leave a star for the repo...Thank you')
     download_type = input('Which type of download '
                 + 'would you like to make: \n\t [S]ingle lesson, '
                 + '[R]ange of lessons, [A]ll lessons:\n\t')
@@ -137,7 +138,11 @@ except ElementNotInteractableException:
 except ElementClickInterceptedException:
     print('\nSorry your internet connect is not strong, it is therefore preventing the webdriver from playing starting the video \n')
 
-except:
+except KeyboardInterrupt:
+    print('Shutting down...Please dont forget to leave a star for the repo...Thank you')
+
+except Exception as e:
+    print(e)
     print('\nUnknown error....Please report this issue to the github repository\n')
 
 
