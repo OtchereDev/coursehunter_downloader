@@ -1,19 +1,18 @@
 from copy import Error
-from mode import all_video_download, get_video, range_download, single_video_download
+from mode import all_video_download, range_download, single_video_download
 import time
 import os
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
+
 import requests.exceptions
 from colorama import Fore
 from colorama import Style
+from selenium.common.exceptions import TimeoutException, WebDriverException,ElementNotInteractableException,ElementClickInterceptedException
 
-from module.create import create_folder, create_logger
-# from module.extractor import extract_video, extract_video_url
-# from module.extractor import extract_material_url_and_download , download_mode
+from module.create import create_folder, 
 
 
 
@@ -33,7 +32,15 @@ print()
 course_link = input('Course_link : \n\t')
 print()
 
+print(f'{Fore.RED}There is a chance that a slow internet connection will prevevnt the download from starting up, therfore you allowed to set a wait time fr the webdriver to wait on connection before breaking down. It is adivisable that is be between 20 and 180 seconds. By default it is 60 seconds{Style.RESET_ALL}\n')
+delay=input('Webdriver Delay time (eg. 20) in seconds:\n\t')
 
+delay=delay or 60
+
+if int(delay)<20:
+    delay=20
+
+print(delay)
 moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver')
 chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver')
 driver_path_check=os.path.exists(chrome_driver_path) or os.path.exists(moz_driver_path)
@@ -80,42 +87,58 @@ play.click()
 time.sleep(6)
 
 # getting hold of all video in the course
-button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#oframeplayer > pjsdiv:nth-child(15) > pjsdiv:nth-child(1) > pjsdiv')))
-button.click()
-episodeList=driver.find_elements_by_css_selector('#player_playlist > pjsdiv > pjsdiv')
+try:
+    button = WebDriverWait(driver, delay).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#oframeplayer > pjsdiv:nth-child(15) > pjsdiv:nth-child(1) > pjsdiv')))
+    button.click()
+    episodeList=driver.find_elements_by_css_selector('#player_playlist > pjsdiv > pjsdiv')
 
 
-# minimize browser window
-driver.minimize_window()
+    # minimize browser window
+    driver.minimize_window()
 
-# initiate download
-print(f'\n{Fore.RED}There are {len(episodeList)} lessons in this course !!!{Style.RESET_ALL}\n')
-download_type = input('Which type of download '
-            + 'would you like to make: \n\t [S]ingle lesson, '
-            + '[R]ange of lessons, [A]ll lessons:\n\t')
+    # initiate download
+    print(f'\n{Fore.RED}There are {len(episodeList)} lessons in this course !!!{Style.RESET_ALL}\n')
+    download_type = input('Which type of download '
+                + 'would you like to make: \n\t [S]ingle lesson, '
+                + '[R]ange of lessons, [A]ll lessons:\n\t')
 
-if download_type.upper() == 'A':
-        all_video_download(episodeList,driver,button,download_path)
-    
+    if download_type.upper() == 'A':
+            all_video_download(episodeList,driver,button,download_path)
+        
 
-elif download_type.upper() =='R':
-    
-    user_range = input('Provide range of lesson to download:\n\t '
-        + 'Use ":" to seperate the range. eg. 1:20  :\n\t')
-    
-    start,end=user_range.split(":")
-    range_download(episodeList,driver,button,download_path,start,end)
+    elif download_type.upper() =='R':
+        
+        user_range = input('Provide range of lesson to download:\n\t '
+            + 'Use ":" to seperate the range. eg. 1:20  :\n\t')
+        
+        start,end=user_range.split(":")
+        range_download(episodeList,driver,button,download_path,start,end)
 
-elif download_type.upper() == 'S':
-    
-    user_esp = input('What a lesson number do you want eg. 10  :\n\t')
+    elif download_type.upper() == 'S':
+        
+        user_esp = input('What a lesson number do you want eg. 10  :\n\t')
 
-    single_video_download(episodeList,driver,button,download_path,user_esp)
-
-
+        single_video_download(episodeList,driver,button,download_path,user_esp)
 
 
-            
+except requests.exceptions.ConnectionError as ce:
+
+    print('\nYou are not connected to internet....Connect and retry\n')
+
+except TimeoutException:
+    print('\nSorry your internet connect is not strong, it is therefore preventing the webdriver from playing starting the video \n')
+
+except WebDriverException:
+    print('\nSorry the browser run the webdriver has been shut down... restart the appplication\n')
+
+except ElementNotInteractableException:
+    print('\nSorry your internet connect is not strong, it is therefore preventing the webdriver from playing starting the video \n')
+
+except ElementClickInterceptedException:
+    print('\nSorry your internet connect is not strong, it is therefore preventing the webdriver from playing starting the video \n')
+
+except:
+    print('\nUnknown error....Please report this issue to the github repository\n')
 
 
 
