@@ -45,7 +45,7 @@ Password: password for login
 
 Course_links : url to the course (eg. https://coursehunter.net/course_name)
 
-Webdriver Delay time (eg. 20) in seconds: how long should the driver wai before failing if your internet connection is not strong (default 20)
+Webdriver Delay time (eg. 20) in seconds: how long should the driver wait before failing if your internet connection is not strong (default 20)
 
 Which type of download would you like to make: A  to download all course lesson
                                                R  to download a range of course lesson eg. 10,15
