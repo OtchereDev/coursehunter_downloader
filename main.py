@@ -14,8 +14,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException,Elem
 
 from module.create import create_folder
 
-
-
+from sys import platform
 
 
 print(f'{Fore.GREEN}+++++++++++++++++++++++++++++++++++++++++++++++++++{Style.RESET_ALL}')
@@ -40,9 +39,13 @@ delay=int(delay) or 60
 if delay<20:
     delay=20
 
-
-moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver')
-chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver')
+if platform != 'win32' or platform != 'cygwin':
+    moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver')
+    chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver')
+else:
+    moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver.exe')
+    chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver.exe')
+    
 driver_path_check=os.path.exists(chrome_driver_path) or os.path.exists(moz_driver_path)
 
 if not driver_path_check:
