@@ -39,7 +39,7 @@ delay=int(delay) or 60
 if delay<20:
     delay=20
 
-if platform != 'win32' or platform != 'cygwin':
+if platform != 'win32' and platform != 'cygwin':
     moz_driver_path=os.path.join(os.path.abspath('.'),'geckodriver')
     chrome_driver_path=os.path.join(os.path.abspath('.'),'chromedriver')
 else:
